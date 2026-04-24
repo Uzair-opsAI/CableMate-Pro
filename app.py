@@ -10,7 +10,7 @@ from modules.lv_engine import calculate_current, apply_derating, voltage_drop, s
 # ─────────────────────────────────────────────────
 # PAGE CONFIG
 # ─────────────────────────────────────────────────
-st.set_page_config(page_title="CableMate", layout="wide", page_icon="⚡")
+st.set_page_config(page_title="CableMate+", layout="wide", page_icon="⚡")
 
 # ─────────────────────────────────────────────────
 # CSS
