@@ -5,6 +5,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 import streamlit.components.v1 as components
 import os
+from modules.lv_engine import calculate_current, apply_derating, voltage_drop, select_cable
 
 # ─────────────────────────────────────────────────
 # PAGE CONFIG
@@ -155,7 +156,7 @@ st.markdown("""
     <div class="cm-logo">⚡</div>
     <div>
       <div class="cm-brand-name">CableMate</div>
-      <div class="cm-brand-sub">MV Cable Sizing &amp; Analysis Platform</div>
+      <div class="cm-brand-sub">LV / MV Cable Sizing &amp; Analysis Platform</div>
     </div>
   </div>
   <div class="cm-hero-right">
@@ -184,12 +185,16 @@ def close_card():
 # ① PROJECT INFORMATION
 # ─────────────────────────────────────────────────
 open_card("📁", "Project Information", "STEP 01", "blue")
+mode = st.selectbox("Cable Voltage Class", ["MV", "LV"])
 col1, col2 = st.columns(2)
 with col1:
     client_name = st.text_input("Client Name", "ABC Pvt Ltd")
     feeder_from = st.selectbox("From Equipment", ["Switchgear", "Transformer", "Generator"])
     from_tag    = st.text_input("From Equipment Tag", placeholder="e.g. TR-01 / SWGR-A1")
-    voltage     = st.selectbox("System Voltage (kV)", [3.3, 6.6, 11, 25, 33, 66, 132])
+    if mode == "MV":
+        voltage = st.selectbox("System Voltage (kV)", [3.3, 6.6, 11, 25, 33, 66, 132])
+    else:
+        voltage = st.selectbox("System Voltage (kV)", [0.415, 0.4, 0.230])
 with col2:
     project_name = st.text_input("Project Name", "Electrical Distribution System")
     feeder_to    = st.selectbox("To Equipment", ["Motor", "Transformer", "Panel"])
@@ -527,79 +532,129 @@ def pick_best(valid_options):
 # ENGINE
 # ─────────────────────────────────────────────────
 if run_btn:
-  
+
     st.write("🚀 ENGINE STARTED")
-    I_fl  = calc_load_current()
-    S_min = calc_sc_min_area()
-    rules = get_feeder_rules()
 
-    # Transformer feeders: add 20% safety margin to current per IEC practice
-    I_design = I_fl * 1 if feeder_to == "Transformer" else I_fl
+    # ==================================================
+    # LV ENGINE
+    # ==================================================
+    if mode == "LV":
 
-    valid_options = []
+        current = calculate_current(power, voltage, pf, eff)
+        design_current = apply_derating(current, kT)
 
-    for size in catalog["sizes"]:
-        for runs in range(1, rules["max_runs"] + 1):
-        # 🔴 ADD THIS BLOCK HERE (VERY IMPORTANT POSITION)
-             # 🔴 HARD FILTER — Transformer SC enforcement (ONLY HERE)
-            if feeder_to == "Transformer" and size < S_min:
-                continue
+        selected = select_cable(design_current, laying)
 
-            if runs >= 2 and size < 95:
-                continue
+        if selected:
+            vd = voltage_drop(selected["mv_per_am"], current, length)
 
-            #DEBUG STARTS
-            if not rules["allow_multi_run"] and runs > 1:
-                continue
-            # ── CHECK 1: SHORT CIRCUIT WITHSTAND ─────────────────────────────
-            # Total cross-section of all parallel conductors must ≥ S_min.
-            # For Transformer feeder (1 run forced), compare the single cable size.
-            if feeder_to != "Transformer":
-    # 🔵 Motor / others → total area allowed
-                sc_area = size * runs
-                if sc_area < S_min:
-                    continue
-
-            # ── CHECK 2: AMPACITY ─────────────────────────────────────────────
-            # Derated ampacity of (runs) parallel cables must ≥ design current.
-            amp_avail = catalog["amp"][size] * kT * runs
-            if amp_avail < I_design:
-                continue
-
-            # ── CHECK 3: RUNNING VOLTAGE DROP ─────────────────────────────────
-            vd_r = calc_vd_run(I_fl, catalog["R"][size], catalog["X"][size], runs)
-            vd_limit = 1.0 if feeder_to == "Transformer" else vd_run_limit
-            if vd_r > vd_limit:
-                continue
-
-            # ── CHECK 4: STARTING VOLTAGE DROP (Motor only) ───────────────────
-            if load_type == "Motor":
-                vd_s = calc_vd_start(I_fl, catalog["R"][size], catalog["X"][size], runs)
-                if vd_s > vd_start_limit:
-                    continue
-            else:
-                vd_s = 0.0
-
-            valid_options.append({
-                "size":  size,
-                "runs":  runs,
-                "v":     vd_r,
-                "vs":    vd_s,
-                "amp":   amp_avail,
-                "score": vd_r + (vd_s if load_type=="Motor" else 0)
+            st.session_state.update({
+                "lv_done": True,
+                "lv_selected": selected,
+                "lv_current": current,
+                "lv_design": design_current,
+                "lv_vd": vd
             })
-    best = pick_best(valid_options)
 
-    st.session_state.update({
-        "best":       best,
-        "I":          I_fl,
-        "I_design":   I_design,
-        "S":          S_min,
-        "v":          best["v"]  if best else 0.0,
-        "vs":         best["vs"] if best else 0.0,
-        "calculated": True,
-    })
+        else:
+            st.session_state.update({
+                "lv_done": True,
+                "lv_selected": None
+            })
+
+    # ==================================================
+    # MV ENGINE
+    # ==================================================
+    else:
+        I_fl  = calc_load_current()
+        S_min = calc_sc_min_area()
+        rules = get_feeder_rules()
+
+        # Transformer feeders: add 20% safety margin to current per IEC practice
+        I_design = I_fl * 1 if feeder_to == "Transformer" else I_fl
     
+        valid_options = []
+    
+        for size in catalog["sizes"]:
+            for runs in range(1, rules["max_runs"] + 1):
+            # 🔴 ADD THIS BLOCK HERE (VERY IMPORTANT POSITION)
+                 # 🔴 HARD FILTER — Transformer SC enforcement (ONLY HERE)
+                if feeder_to == "Transformer" and size < S_min:
+                    continue
+    
+                if runs >= 2 and size < 95:
+                    continue
+    
+                #DEBUG STARTS
+                if not rules["allow_multi_run"] and runs > 1:
+                    continue
+                # ── CHECK 1: SHORT CIRCUIT WITHSTAND ─────────────────────────────
+                # Total cross-section of all parallel conductors must ≥ S_min.
+                # For Transformer feeder (1 run forced), compare the single cable size.
+                if feeder_to != "Transformer":
+        # 🔵 Motor / others → total area allowed
+                    sc_area = size * runs
+                    if sc_area < S_min:
+                        continue
+    
+                # ── CHECK 2: AMPACITY ─────────────────────────────────────────────
+                # Derated ampacity of (runs) parallel cables must ≥ design current.
+                amp_avail = catalog["amp"][size] * kT * runs
+                if amp_avail < I_design:
+                    continue
+    
+                # ── CHECK 3: RUNNING VOLTAGE DROP ─────────────────────────────────
+                vd_r = calc_vd_run(I_fl, catalog["R"][size], catalog["X"][size], runs)
+                vd_limit = 1.0 if feeder_to == "Transformer" else vd_run_limit
+                if vd_r > vd_limit:
+                    continue
+    
+                # ── CHECK 4: STARTING VOLTAGE DROP (Motor only) ───────────────────
+                if load_type == "Motor":
+                    vd_s = calc_vd_start(I_fl, catalog["R"][size], catalog["X"][size], runs)
+                    if vd_s > vd_start_limit:
+                        continue
+                else:
+                    vd_s = 0.0
+    
+                valid_options.append({
+                    "size":  size,
+                    "runs":  runs,
+                    "v":     vd_r,
+                    "vs":    vd_s,
+                    "amp":   amp_avail,
+                    "score": vd_r + (vd_s if load_type=="Motor" else 0)
+                })
+        best = pick_best(valid_options)
+    
+        st.session_state.update({
+            "best":       best,
+            "I":          I_fl,
+            "I_design":   I_design,
+            "S":          S_min,
+            "v":          best["v"]  if best else 0.0,
+            "vs":         best["vs"] if best else 0.0,
+            "calculated": True,
+        })
+# ==================================================
+# LV RESULTS
+# ==================================================
+if st.session_state.get("lv_done", False):
+
+    sel = st.session_state.get("lv_selected")
+
+    if sel:
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        st.success(f"✅ Selected LV Cable: {sel['size']} mm² Copper")
+
+        c1, c2, c3 = st.columns(3)
+        c1.metric("Load Current", f"{round(st.session_state['lv_current'],2)} A")
+        c2.metric("Design Current", f"{round(st.session_state['lv_design'],2)} A")
+        c3.metric("Voltage Drop", f"{round(st.session_state['lv_vd'],2)} V")
+
+    else:
+        st.error("⚠ No suitable LV cable found.")
 # ─────────────────────────────────────────────────
 # RESULTS
 # ─────────────────────────────────────────────────
