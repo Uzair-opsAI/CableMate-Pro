@@ -155,7 +155,7 @@ st.markdown("""
   <div class="cm-hero-left">
     <div class="cm-logo">⚡</div>
     <div>
-      <div class="cm-brand-name">CableMate</div>
+      <div class="cm-brand-name">CableMate+</div>
       <div class="cm-brand-sub">LV / MV Cable Sizing &amp; Analysis Platform</div>
     </div>
   </div>
