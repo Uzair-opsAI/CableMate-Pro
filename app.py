@@ -194,7 +194,7 @@ with col1:
     if mode == "MV":
         voltage = st.selectbox("System Voltage (kV)", [3.3, 6.6, 11, 25, 33, 66, 132])
     else:
-        voltage = st.selectbox("System Voltage (kV)", [0.415, 0.4, 0.230])
+        voltage = st.selectbox("System Voltage (kV)", [0.415, 0.4,0.380, 0.230, 0.220])
 with col2:
     project_name = st.text_input("Project Name", "Electrical Distribution System")
     feeder_to    = st.selectbox("To Equipment", ["Motor", "Transformer", "Panel"])
