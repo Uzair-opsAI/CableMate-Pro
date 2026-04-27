@@ -539,6 +539,9 @@ if run_btn:
     # LV ENGINE
     # ==================================================
     if mode == "LV":
+    # Clear old MV results
+        for key in ["calculated", "best", "I", "I_design", "S", "v", "vs"]:
+            st.session_state.pop(key, None)
 
         current = calculate_current(power, voltage, pf, eff)
         design_current = apply_derating(current, kT)
@@ -566,6 +569,9 @@ if run_btn:
     # MV ENGINE
     # ==================================================
     else:
+    # Clear old LV results
+        for key in ["lv_done", "lv_selected", "lv_current", "lv_design", "lv_vd"]:
+            st.session_state.pop(key, None)
         I_fl  = calc_load_current()
         S_min = calc_sc_min_area()
         rules = get_feeder_rules()
