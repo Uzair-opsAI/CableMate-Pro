@@ -1,100 +1,49 @@
-# LV Cable Catalogue Data (Oman Cables based)
+# Full LV Catalogue Data File
 
-lv_cables_cu = [
-    {
-        "size": 1.5,
-        "current_air": 19,
-        "current_ground": 16,
-        "mv_per_am": 33,
-        "resistance": 12.1,
-        "reactance": 0.08
-    },
-    {
-        "size": 2.5,
-        "current_air": 27,
-        "current_ground": 22,
-        "mv_per_am": 22,
-        "resistance": 7.41,
-        "reactance": 0.08
-    },
-    {
-        "size": 4,
-        "current_air": 34,
-        "current_ground": 28,
-        "mv_per_am": 28,
-        "resistance": 4.61,
-        "reactance": 0.08
-    },
-    {
-        "size": 6,
-        "current_air": 44,
-        "current_ground": 36,
-        "mv_per_am": 36,
-        "resistance": 3.08,
-        "reactance": 0.08
-    },
-    {
-        "size": 10,
-        "current_air": 58,
-        "current_ground": 48,
-        "mv_per_am": 48,
-        "resistance": 1.83,
-        "reactance": 0.08
-    },
-    {
-        "size": 16,
-        "current_air": 83,
-        "current_ground": 70,
-        "mv_per_am": 70,
-        "resistance": 1.15,
-        "reactance": 0.08
-    },
-    {
-        "size": 25,
-        "current_air": 105,
-        "current_ground": 88,
-        "mv_per_am": 88,
-        "resistance": 0.727,
-        "reactance": 0.08
-    },
-    {
-        "size": 35,
-        "current_air": 129,
-        "current_ground": 109,
-        "mv_per_am": 109,
-        "resistance": 0.524,
-        "reactance": 0.08
-    },
-    {
-        "size": 50,
-        "current_air": 157,
-        "current_ground": 132,
-        "mv_per_am": 132,
-        "resistance": 0.387,
-        "reactance": 0.08
-    },
-    {
-        "size": 70,
-        "current_air": 200,
-        "current_ground": 167,
-        "mv_per_am": 167,
-        "resistance": 0.268,
-        "reactance": 0.08
-    },
-    {
-        "size": 95,
-        "current_air": 246,
-        "current_ground": 207,
-        "mv_per_am": 207,
-        "resistance": 0.193,
-        "reactance": 0.08
-    },
-    {
-        "size": 120,
-        "current_air": 288,
-        "current_ground": 241,
-        "mv_per_am": 241,
-        "resistance": 0.153,
-        "reactance": 0.08
-    },
+lv_cu_xlpe_1c = [
+{"size":1.5,"cores":1,"material":"Cu","insulation":"XLPE","current_ground":24,"current_air":22,"mv_per_am":16.0,"dc_resistance":12.1,"reactance":0.10},
+{"size":2.5,"cores":1,"material":"Cu","insulation":"XLPE","current_ground":30,"current_air":27,"mv_per_am":11.0,"dc_resistance":7.41,"reactance":0.10},
+{"size":4,"cores":1,"material":"Cu","insulation":"XLPE","current_ground":40,"current_air":34,"mv_per_am":7.0,"dc_resistance":4.61,"reactance":0.10},
+{"size":6,"cores":1,"material":"Cu","insulation":"XLPE","current_ground":50,"current_air":44,"mv_per_am":4.7,"dc_resistance":3.08,"reactance":0.10},
+{"size":10,"cores":1,"material":"Cu","insulation":"XLPE","current_ground":67,"current_air":58,"mv_per_am":2.9,"dc_resistance":1.83,"reactance":0.10},
+{"size":16,"cores":1,"material":"Cu","insulation":"XLPE","current_ground":92,"current_air":83,"mv_per_am":1.9,"dc_resistance":1.15,"reactance":0.10},
+{"size":25,"cores":1,"material":"Cu","insulation":"XLPE","current_ground":123,"current_air":105,"mv_per_am":1.2,"dc_resistance":0.727,"reactance":0.09},
+{"size":35,"cores":1,"material":"Cu","insulation":"XLPE","current_ground":146,"current_air":129,"mv_per_am":0.95,"dc_resistance":0.524,"reactance":0.09},
+{"size":50,"cores":1,"material":"Cu","insulation":"XLPE","current_ground":174,"current_air":157,"mv_per_am":0.75,"dc_resistance":0.387,"reactance":0.09},
+{"size":70,"cores":1,"material":"Cu","insulation":"XLPE","current_ground":222,"current_air":200,"mv_per_am":0.53,"dc_resistance":0.268,"reactance":0.09},
+{"size":95,"cores":1,"material":"Cu","insulation":"XLPE","current_ground":275,"current_air":246,"mv_per_am":0.38,"dc_resistance":0.193,"reactance":0.084},
+{"size":120,"cores":1,"material":"Cu","insulation":"XLPE","current_ground":321,"current_air":288,"mv_per_am":0.32,"dc_resistance":0.153,"reactance":0.084},
+{"size":150,"cores":1,"material":"Cu","insulation":"XLPE","current_ground":371,"current_air":330,"mv_per_am":0.27,"dc_resistance":0.124,"reactance":0.082},
+{"size":185,"cores":1,"material":"Cu","insulation":"XLPE","current_ground":430,"current_air":381,"mv_per_am":0.23,"dc_resistance":0.0991,"reactance":0.081},
+{"size":240,"cores":1,"material":"Cu","insulation":"XLPE","current_ground":513,"current_air":454,"mv_per_am":0.19,"dc_resistance":0.0754,"reactance":0.079},
+{"size":300,"cores":1,"material":"Cu","insulation":"XLPE","current_ground":594,"current_air":524,"mv_per_am":0.17,"dc_resistance":0.0601,"reactance":0.078},
+{"size":400,"cores":1,"material":"Cu","insulation":"XLPE","current_ground":692,"current_air":608,"mv_per_am":0.15,"dc_resistance":0.0470,"reactance":0.077},
+{"size":500,"cores":1,"material":"Cu","insulation":"XLPE","current_ground":801,"current_air":671,"mv_per_am":0.14,"dc_resistance":0.0366,"reactance":0.076},
+{"size":630,"cores":1,"material":"Cu","insulation":"XLPE","current_ground":925,"current_air":746,"mv_per_am":0.13,"dc_resistance":0.0283,"reactance":0.075},
+{"size":800,"cores":1,"material":"Cu","insulation":"XLPE","current_ground":1051,"current_air":760,"mv_per_am":0.12,"dc_resistance":0.0221,"reactance":0.074},
+{"size":1000,"cores":1,"material":"Cu","insulation":"XLPE","current_ground":1172,"current_air":843,"mv_per_am":0.11,"dc_resistance":0.0176,"reactance":0.073},
+]
+
+lv_cu_xlpe_3c = [
+{"size":1.5,"cores":3,"material":"Cu","insulation":"XLPE","current_ground":18,"current_air":16,"mv_per_am":18.0,"dc_resistance":12.1,"reactance":0.08},
+{"size":2.5,"cores":3,"material":"Cu","insulation":"XLPE","current_ground":24,"current_air":21,"mv_per_am":12.5,"dc_resistance":7.41,"reactance":0.08},
+{"size":4,"cores":3,"material":"Cu","insulation":"XLPE","current_ground":32,"current_air":28,"mv_per_am":8.1,"dc_resistance":4.61,"reactance":0.08},
+{"size":6,"cores":3,"material":"Cu","insulation":"XLPE","current_ground":41,"current_air":36,"mv_per_am":5.4,"dc_resistance":3.08,"reactance":0.08},
+{"size":10,"cores":3,"material":"Cu","insulation":"XLPE","current_ground":57,"current_air":50,"mv_per_am":3.3,"dc_resistance":1.83,"reactance":0.08},
+{"size":16,"cores":3,"material":"Cu","insulation":"XLPE","current_ground":76,"current_air":67,"mv_per_am":2.2,"dc_resistance":1.15,"reactance":0.08},
+{"size":25,"cores":3,"material":"Cu","insulation":"XLPE","current_ground":101,"current_air":89,"mv_per_am":1.45,"dc_resistance":0.727,"reactance":0.075},
+{"size":35,"cores":3,"material":"Cu","insulation":"XLPE","current_ground":125,"current_air":110,"mv_per_am":1.15,"dc_resistance":0.524,"reactance":0.072},
+{"size":50,"cores":3,"material":"Cu","insulation":"XLPE","current_ground":151,"current_air":134,"mv_per_am":0.92,"dc_resistance":0.387,"reactance":0.070},
+{"size":70,"cores":3,"material":"Cu","insulation":"XLPE","current_ground":192,"current_air":171,"mv_per_am":0.67,"dc_resistance":0.268,"reactance":0.068},
+{"size":95,"cores":3,"material":"Cu","insulation":"XLPE","current_ground":232,"current_air":207,"mv_per_am":0.52,"dc_resistance":0.193,"reactance":0.066},
+{"size":120,"cores":3,"material":"Cu","insulation":"XLPE","current_ground":269,"current_air":241,"mv_per_am":0.43,"dc_resistance":0.153,"reactance":0.064},
+{"size":150,"cores":3,"material":"Cu","insulation":"XLPE","current_ground":309,"current_air":277,"mv_per_am":0.37,"dc_resistance":0.124,"reactance":0.063},
+{"size":185,"cores":3,"material":"Cu","insulation":"XLPE","current_ground":356,"current_air":319,"mv_per_am":0.32,"dc_resistance":0.0991,"reactance":0.062},
+{"size":240,"cores":3,"material":"Cu","insulation":"XLPE","current_ground":425,"current_air":381,"mv_per_am":0.27,"dc_resistance":0.0754,"reactance":0.060},
+{"size":300,"cores":3,"material":"Cu","insulation":"XLPE","current_ground":492,"current_air":441,"mv_per_am":0.24,"dc_resistance":0.0601,"reactance":0.059},
+{"size":400,"cores":3,"material":"Cu","insulation":"XLPE","current_ground":573,"current_air":514,"mv_per_am":0.21,"dc_resistance":0.0470,"reactance":0.058},
+{"size":500,"cores":3,"material":"Cu","insulation":"XLPE","current_ground":663,"current_air":595,"mv_per_am":0.19,"dc_resistance":0.0366,"reactance":0.057},
+{"size":630,"cores":3,"material":"Cu","insulation":"XLPE","current_ground":764,"current_air":686,"mv_per_am":0.17,"dc_resistance":0.0283,"reactance":0.056},
+{"size":800,"cores":3,"material":"Cu","insulation":"XLPE","current_ground":869,"current_air":781,"mv_per_am":0.16,"dc_resistance":0.0221,"reactance":0.055},
+{"size":1000,"cores":3,"material":"Cu","insulation":"XLPE","current_ground":970,"current_air":872,"mv_per_am":0.15,"dc_resistance":0.0176,"reactance":0.054},
 ]
