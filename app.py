@@ -657,7 +657,10 @@ if st.session_state.get("lv_done", False):
         c1, c2, c3 = st.columns(3)
         c1.metric("Load Current", f"{round(st.session_state['lv_current'],2)} A")
         c2.metric("Design Current", f"{round(st.session_state['lv_design'],2)} A")
-        c3.metric("Voltage Drop", f"{round(st.session_state['lv_vd'],2)} V")
+        vd = st.session_state["lv_vd"]
+        vd_pct = (vd / (voltage * 1000)) * 100
+
+        c3.metric("Voltage Drop", f"{round(vd,2)} V ({round(vd_pct,2)}%)")
 
     else:
         st.error("⚠ No suitable LV cable found.")
