@@ -43,7 +43,6 @@ def select_best_lv(
     valid = []
 
     for cable in lv_cables_cu:
-
         amp = cable["current_air"] if laying == "Air" else cable["current_ground"]
 
         if amp < i_design:
@@ -52,7 +51,9 @@ def select_best_lv(
         if cable["size"] < s_min:
             continue
 
-        vd_run = running_vd_percent(cable["mv_per_am"], current, length_m, voltage_kv)
+        vd_run = running_vd_percent(
+            cable["mv_per_am"], current, length_m, voltage_kv
+        )
 
         if vd_run > vd_run_limit:
             continue
