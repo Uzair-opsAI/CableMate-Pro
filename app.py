@@ -233,16 +233,47 @@ if feeder_to in ("Motor", "Transformer"):
     st.caption(f"📌  Load type automatically set to  {load_type}  based on feeder destination.")
 
 col1, col2 = st.columns(2)
+
+# Keep MV unchanged, only LV gets smaller load entry range
+min_load = 1.0 if mode == "MV" else 0.1
+default_kw = 400.0 if mode == "MV" else 1.0
+default_kva = 500.0 if mode == "MV" else 1.0
+
 with col1:
     if load_type == "Transformer":
-        power = st.number_input("Load (kVA)", value=500, min_value=1)
+        power = st.number_input(
+            "Load (kVA)",
+            value=default_kva,
+            min_value=min_load,
+            step=0.1
+        )
     else:
-        power = st.number_input("Load (kW)", value=400, min_value=1)
+        power = st.number_input(
+            "Load (kW)",
+            value=default_kw,
+            min_value=min_load,
+            step=0.1
+        )
+
 with col2:
-    pf  = st.number_input("Power Factor", value=0.91, min_value=0.01, max_value=1.0,
-                          step=0.01, format="%.2f")
-    eff = st.number_input("Efficiency", value=0.97, min_value=0.01, max_value=1.0,
-                          step=0.01, format="%.2f")
+    pf = st.number_input(
+        "Power Factor",
+        value=0.91,
+        min_value=0.01,
+        max_value=1.0,
+        step=0.01,
+        format="%.2f"
+    )
+
+    eff = st.number_input(
+        "Efficiency",
+        value=0.97,
+        min_value=0.01,
+        max_value=1.0,
+        step=0.01,
+        format="%.2f"
+    )
+
 close_card()
 
 # ─────────────────────────────────────────────────
