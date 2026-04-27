@@ -5,7 +5,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 import streamlit.components.v1 as components
 import os
-from modules.lv_engine import calculate_current, apply_derating, voltage_drop, select_cable
+from modules.lv_engine import select_best_lv
 
 # ─────────────────────────────────────────────────
 # PAGE CONFIG
@@ -539,31 +539,29 @@ if run_btn:
     # LV ENGINE
     # ==================================================
     if mode == "LV":
-    # Clear old MV results
+
+    # remove old MV state
         for key in ["calculated", "best", "I", "I_design", "S", "v", "vs"]:
             st.session_state.pop(key, None)
 
-        current = calculate_current(power, voltage, pf, eff)
-        design_current = apply_derating(current, kT)
-
-        selected = select_cable(design_current, laying)
-
-        if selected:
-            vd = voltage_drop(selected["mv_per_am"], current, length)
-
-            st.session_state.update({
-                "lv_done": True,
-                "lv_selected": selected,
-                "lv_current": current,
-                "lv_design": design_current,
-                "lv_vd": vd
-            })
-
-        else:
-            st.session_state.update({
-                "lv_done": True,
-                "lv_selected": None
-            })
+        result = select_best_lv(
+            power_kw=power,
+            voltage_kv=voltage,
+            pf=pf,
+            eff=eff,
+            derating=kT,
+            laying=laying,
+            length_m=length,
+            fault_ka=fault,
+            fault_time=fault_time,
+            vd_run_limit=vd_run_limit,
+            vd_start_limit=vd_start_limit,
+            start_multiple=starting_multiple,
+            material=material
+        )
+    
+        st.session_state["lv_done"] = True
+        st.session_state["lv_result"] = result
 
     # ==================================================
     # MV ENGINE
@@ -647,23 +645,19 @@ if run_btn:
 # ==================================================
 if st.session_state.get("lv_done", False):
 
-    sel = st.session_state.get("lv_selected")
+    res = st.session_state.get("lv_result")
 
-    if sel:
-        st.markdown("<br>", unsafe_allow_html=True)
+    if res:
+        st.success(f"✅ Selected LV Cable: {res['size']} mm² {material}")
 
-        st.success(f"✅ Selected LV Cable: {sel['size']} mm² Copper")
-
-        c1, c2, c3 = st.columns(3)
-        c1.metric("Load Current", f"{round(st.session_state['lv_current'],2)} A")
-        c2.metric("Design Current", f"{round(st.session_state['lv_design'],2)} A")
-        vd = st.session_state["lv_vd"]
-        vd_pct = (vd / (voltage * 1000)) * 100
-
-        c3.metric("Voltage Drop", f"{round(vd,2)} V ({round(vd_pct,2)}%)")
+        c1, c2, c3, c4 = st.columns(4)
+        c1.metric("Load Current", f"{round(res['current'],2)} A")
+        c2.metric("Design Current", f"{round(res['design'],2)} A")
+        c3.metric("Run VD", f"{round(res['vd_run'],2)} %")
+        c4.metric("Start VD", f"{round(res['vd_start'],2)} %")
 
     else:
-        st.error("⚠ No suitable LV cable found.")
+        st.error("⚠ No LV cable satisfies all checks.")
 # ─────────────────────────────────────────────────
 # RESULTS
 # ─────────────────────────────────────────────────
