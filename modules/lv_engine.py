@@ -10,8 +10,9 @@ def apply_derating(current, derating):
 
 
 def voltage_drop(mv_per_am, current, length):
-    return (mv_per_am * current * length) / 1000
-
+    # mV/A/m × A × m = mV
+    # convert mV to V
+    return (mv_per_am * current * length) / 1000000
 
 def select_cable(current, laying_type):
     for cable in lv_cables_cu:
