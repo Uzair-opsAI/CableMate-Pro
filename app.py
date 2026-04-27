@@ -275,6 +275,8 @@ else:
 
 if voltage >= 66 and cable_type == "3-Core":
     st.warning("⚠  At 66 kV and above, single-core cables are typically used.")
+# LV engine core mapping
+core_type = "3 Core" if cable_type == "3-Core" else "Single Core"
 close_card()
 
 # ─────────────────────────────────────────────────
