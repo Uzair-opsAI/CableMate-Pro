@@ -557,6 +557,7 @@ if run_btn:
             vd_run_limit=vd_run_limit,
             vd_start_limit=vd_start_limit,
             start_multiple=starting_multiple,
+            core_type=core_type,
             material=material
         )
     
