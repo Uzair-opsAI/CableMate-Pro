@@ -37,6 +37,14 @@ def starting_vd_percent(mv_per_am, current, length_m, voltage_kv, multiple):
 
 def get_dataset(core_type, material="Cu", insulation="XLPE"):
 
+    # Normalize material names from UI
+    material = material.strip().lower()
+
+    if material in ["copper", "cu"]:
+        material = "Cu"
+    elif material in ["aluminium", "aluminum", "al"]:
+        material = "Al"
+
     if material == "Cu" and insulation == "XLPE":
 
         if core_type == "Single Core":
@@ -101,14 +109,16 @@ def select_best_lv(
         if vd_run > vd_run_limit:
             continue
 
-        # Check 4: Starting VD
-        vd_start = starting_vd_percent(
-            cable["mv_per_am"], current, length_m, voltage_kv, start_multiple
-        )
-
-        if vd_start > vd_start_limit:
-            continue
-
+      # Check 4: Starting VD (only meaningful when multiple > 1)
+        if start_multiple > 1:
+            vd_start = starting_vd_percent(
+                cable["mv_per_am"], current, length_m, voltage_kv, start_multiple
+            )
+        
+            if vd_start > vd_start_limit:
+                continue
+        else:
+            vd_start = 0
         valid.append({
             "size": cable["size"],
             "current": current,
