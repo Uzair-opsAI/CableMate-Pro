@@ -79,6 +79,10 @@ def select_best_lv(
 ):
 
     dataset = get_dataset(core_type, material, insulation)
+    print("DEBUG core_type:", core_type)
+    print("DEBUG material:", material)
+    print("DEBUG dataset rows:", len(dataset))
+    print("DEBUG laying:", laying)
 
     if not dataset:
         return None
@@ -90,7 +94,9 @@ def select_best_lv(
     valid = []
 
     for cable in dataset:
-
+        print("Trying size:", cable["size"])
+        print("Ampacity:", amp, "Required:", i_design)
+        print("SC size req:", s_min)
         amp = cable["current_air"] if laying == "Air" else cable["current_ground"]
 
         # Check 1: Ampacity
