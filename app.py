@@ -185,21 +185,75 @@ def close_card():
 # ① PROJECT INFORMATION
 # ─────────────────────────────────────────────────
 open_card("📁", "Project Information", "STEP 01", "blue")
+
 mode = st.selectbox("Cable Voltage Class", ["MV", "LV"])
+
 col1, col2 = st.columns(2)
+
 with col1:
     client_name = st.text_input("Client Name", "ABC Pvt Ltd")
-    feeder_from = st.selectbox("From Equipment", ["Switchgear", "Transformer", "Generator"])
-    from_tag    = st.text_input("From Equipment Tag", placeholder="e.g. TR-01 / SWGR-A1")
+
+    feeder_from = st.selectbox(
+        "From Equipment",
+        ["Switchgear", "Transformer", "Generator"]
+    )
+
+    from_tag = st.text_input(
+        "From Equipment Tag",
+        placeholder="e.g. TR-01 / SWGR-A1"
+    )
+
+    # Voltage Selection
     if mode == "MV":
-        voltage = st.selectbox("System Voltage (kV)", [3.3, 6.6, 11, 25, 33, 66, 132])
+        voltage = st.selectbox(
+            "System Voltage (kV)",
+            [3.3, 6.6, 11, 25, 33, 66, 132]
+        )
     else:
-        voltage = st.selectbox("System Voltage (kV)", [0.415, 0.4,0.380, 0.230, 0.220])
+        voltage = st.selectbox(
+            "System Voltage (kV)",
+            [0.415, 0.400, 0.380, 0.230, 0.220],
+            format_func=lambda x: f"{int(x * 1000)} V"
+        )
+
+    # Phase System (LV only)
+    if mode == "LV":
+        phase_system = st.selectbox(
+            "Phase System",
+            ["Auto", "3-Phase", "1-Phase"]
+        )
+    else:
+        phase_system = "3-Phase"
+
+    # Auto Logic for LV
+    if mode == "LV" and phase_system == "Auto":
+        if voltage in [0.220, 0.230]:
+            phase_system = "1-Phase"
+        else:
+            phase_system = "3-Phase"
+
 with col2:
-    project_name = st.text_input("Project Name", "Electrical Distribution System")
-    feeder_to    = st.selectbox("To Equipment", ["Motor", "Transformer", "Panel"])
-    to_tag       = st.text_input("To Equipment Tag", placeholder="e.g. MTR-01 / PNL-B2")
-    length       = st.number_input("Cable Length (m)", value=300, min_value=1)
+    project_name = st.text_input(
+        "Project Name",
+        "Electrical Distribution System"
+    )
+
+    feeder_to = st.selectbox(
+        "To Equipment",
+        ["Motor", "Transformer", "Panel"]
+    )
+
+    to_tag = st.text_input(
+        "To Equipment Tag",
+        placeholder="e.g. MTR-01 / PNL-B2"
+    )
+
+    length = st.number_input(
+        "Cable Length (m)",
+        value=300,
+        min_value=1
+    )
+
 close_card()
 
 # ─────────────────────────────────────────────────
