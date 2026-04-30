@@ -742,7 +742,7 @@ if st.session_state.get("lv_done", False):
         st.markdown(f"""
         <div class="cm-result">
           <div class="cm-result-eyebrow">✔  Optimal LV Cable Selected</div>
-          <div class="cm-result-cable">1R × {core_type.replace(' ', '')} × {res['size']} mm²</div>
+          <div class="cm-result-cable">{res.get('runs', 1)}R × {core_type.replace(' ', '')} × {res['size']} mm²</div>
         </div>""", unsafe_allow_html=True)
 
         open_card("📄", "LV Cable Calculation Sheet", "IEC VERIFIED", "green")
