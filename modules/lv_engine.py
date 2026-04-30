@@ -107,10 +107,19 @@ def select_best_lv(
             if amp < i_design:
                 continue
     
-            # Short Circuit (total conductor area)
+           # Short Circuit (total conductor area)
+
             total_area = cable["size"] * runs
-            if total_area < s_min:
-                continue
+            
+            apply_sc = True
+            
+            # Ignore SC for small LV loads (protected circuits)
+            if power_kw <= 5:
+                apply_sc = False
+            
+            if apply_sc:
+                if total_area < s_min:
+                    continue
     
             # Running Voltage Drop (divided by runs)
             vd_run = voltage_drop_percent(
