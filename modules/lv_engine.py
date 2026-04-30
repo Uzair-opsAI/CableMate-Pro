@@ -6,8 +6,16 @@ from data.lv_catalogue import lv_cu_xlpe_1c, lv_cu_xlpe_3c
 # -------------------------------------------------
 
 def calculate_current(power_kw, voltage_kv, pf, efficiency):
+
     voltage_v = voltage_kv * 1000
-    return (power_kw * 1000) / (math.sqrt(3) * voltage_v * pf * efficiency)
+
+    # Auto phase detection
+    if voltage_v <= 230:
+        # Single phase
+        return (power_kw * 1000) / (voltage_v * pf)
+    else:
+        # Three phase
+        return (power_kw * 1000) / (math.sqrt(3) * voltage_v * pf * efficiency)
 
 
 def design_current(load_current, derating):
