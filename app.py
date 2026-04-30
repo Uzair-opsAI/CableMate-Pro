@@ -212,7 +212,7 @@ with col1:
     else:
         voltage = st.selectbox(
             "System Voltage (kV)",
-            [0.415, 0.400, 0.380, 0.230, 0.220],
+            [0.415, 0.400, 0.380, 0.230, 0.220, 0.110],
             format_func=lambda x: f"{int(x * 1000)} V"
         )
 
