@@ -729,20 +729,52 @@ if run_btn:
             "calculated": True,
         })
 # ==================================================
-# LV RESULTS
+# LV RESULTS (FULL ENGINEERING DISPLAY)
 # ==================================================
 if st.session_state.get("lv_done", False):
 
     res = st.session_state.get("lv_result")
 
     if res:
-        st.success(f"✅ Selected LV Cable: {res['size']} mm² {material}")
 
-        c1, c2, c3, c4 = st.columns(4)
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        st.markdown(f"""
+        <div class="cm-result">
+          <div class="cm-result-eyebrow">✔  Optimal LV Cable Selected</div>
+          <div class="cm-result-cable">1R × {core_type.replace(' ', '')} × {res['size']} mm²</div>
+        </div>""", unsafe_allow_html=True)
+
+        open_card("📄", "LV Cable Calculation Sheet", "IEC VERIFIED", "green")
+
+        # (I) Current
+        st.markdown("### (I)  Current Calculation")
+        c1, c2 = st.columns(2)
         c1.metric("Load Current", f"{round(res['current'],2)} A")
         c2.metric("Design Current", f"{round(res['design'],2)} A")
-        c3.metric("Run VD", f"{round(res['vd_run'],2)} %")
-        c4.metric("Start VD", f"{round(res['vd_start'],2)} %")
+        st.divider()
+
+        # (II) Ampacity
+        st.markdown("### (II)  Ampacity Check")
+        st.success(
+            f"PASS → {round(res['ampacity'],1)} A ≥ {round(res['design'],1)} A"
+        )
+        st.divider()
+
+        # (III) Voltage Drop
+        st.markdown("### (III)  Voltage Drop Check")
+        c1, c2 = st.columns(2)
+        c1.metric("Running VD", f"{round(res['vd_run'],2)} %")
+        c2.metric("Starting VD", f"{round(res['vd_start'],2)} %")
+        st.divider()
+
+        # (IV) Short Circuit
+        st.markdown("### (IV)  Short Circuit Check")
+        st.success(
+            f"PASS → {res['size']} mm² ≥ {round(res['sc_min'],1)} mm²"
+        )
+
+        close_card()
 
     else:
         st.error("⚠ No LV cable satisfies all checks.")
@@ -965,10 +997,47 @@ with col_m:
 close_card()
 
 if apply_manual:
-    st.session_state.update({
-        "manual_done": True, "calc_manual": True,
-        "m_size": manual_size, "m_runs": manual_runs, "m_type": cable_type,
-    })
+
+    if mode == "LV":
+
+        from data.lv_catalogue import lv_cu_xlpe_1c, lv_cu_xlpe_3c
+
+        dataset = lv_cu_xlpe_3c if core_type == "3 Core" else lv_cu_xlpe_1c
+
+        sel = next((c for c in dataset if c["size"] == manual_size), None)
+
+        if sel:
+
+            current = (power * 1000) / (math.sqrt(3) * voltage * 1000 * pf * eff)
+            design  = current / kT
+
+            amp = sel["current_air"] if laying == "Air" else sel["current_ground"]
+
+            vd_run = (sel["mv_per_am"] * current * length) / (1000 * voltage * 1000) * 100
+            vd_start = (sel["mv_per_am"] * current * starting_multiple * length) / (1000 * voltage * 1000) * 100
+
+            sc_min = (fault * 1000 * math.sqrt(fault_time)) / 143
+
+            st.markdown("### 🔧 Manual LV Cable Evaluation")
+
+            c1, c2, c3, c4 = st.columns(4)
+            c1.metric("Ampacity", "PASS" if amp >= design else "FAIL")
+            c2.metric("Run VD", "PASS" if vd_run <= vd_run_limit else "FAIL")
+            c3.metric("Start VD", "PASS" if vd_start <= vd_start_limit else "FAIL")
+            c4.metric("SC Check", "PASS" if manual_size >= sc_min else "FAIL")
+
+        else:
+            st.error("Cable not found")
+
+    else:
+        # KEEP YOUR EXISTING MV LOGIC
+        st.session_state.update({
+            "manual_done": True,
+            "calc_manual": True,
+            "m_size": manual_size,
+            "m_runs": manual_runs,
+            "m_type": cable_type,
+        })
 
 if "calculated" in st.session_state and st.session_state.get("calc_manual", False):
     ms   = st.session_state["m_size"]
