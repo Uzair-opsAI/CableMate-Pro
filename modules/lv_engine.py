@@ -1,7 +1,6 @@
 import math
 from data.lv_catalogue import lv_cu_xlpe_1c, lv_cu_xlpe_3c
 
-
 # -------------------------------------------------
 # BASIC CALCULATIONS
 # -------------------------------------------------
