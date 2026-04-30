@@ -987,7 +987,26 @@ st.markdown("<br>", unsafe_allow_html=True)
 open_card("🔧", "Manual Cable Evaluation", "OVERRIDE", "slate")
 col1, col2 = st.columns(2)
 with col1:
-    manual_size = st.selectbox("Cable Size (mm²)", catalog["sizes"], key="man_size")
+
+    if mode == "LV":
+        from data.lv_catalogue import lv_cu_xlpe_1c, lv_cu_xlpe_3c
+
+        dataset = lv_cu_xlpe_3c if core_type == "3 Core" else lv_cu_xlpe_1c
+        available_sizes = sorted([c["size"] for c in dataset])
+
+        manual_size = st.selectbox(
+            "Cable Size (mm²)",
+            available_sizes,
+            key="man_size"
+        )
+
+    else:
+        # KEEP EXISTING MV LOGIC
+        manual_size = st.selectbox(
+            "Cable Size (mm²)",
+            catalog["sizes"],
+            key="man_size"
+        )
 with col2:
     manual_runs = st.selectbox("Number of Runs", list(range(1, 11)), key="man_runs")
 
