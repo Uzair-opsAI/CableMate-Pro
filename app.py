@@ -770,8 +770,10 @@ if st.session_state.get("lv_done", False):
 
         # (IV) Short Circuit
         st.markdown("### (IV)  Short Circuit Check")
+        total_area = res['size'] * res.get('runs', 1)
+
         st.success(
-            f"PASS → {res['size']} mm² ≥ {round(res['sc_min'],1)} mm²"
+        f"PASS → {total_area} mm² ≥ {round(res['sc_min'],1)} mm²"
         )
 
         close_card()
@@ -1043,7 +1045,8 @@ if apply_manual:
             c1.metric("Ampacity", "PASS" if amp >= design else "FAIL")
             c2.metric("Run VD", "PASS" if vd_run <= vd_run_limit else "FAIL")
             c3.metric("Start VD", "PASS" if vd_start <= vd_start_limit else "FAIL")
-            c4.metric("SC Check", "PASS" if manual_size >= sc_min else "FAIL")
+            total_area = manual_size * manual_runs
+            c4.metric("SC Check", "PASS" if total_area >= sc_min else "FAIL")
 
         else:
             st.error("Cable not found")
