@@ -9,12 +9,13 @@ def calculate_current(power_kw, voltage_kv, pf, efficiency):
 
     voltage_v = voltage_kv * 1000
 
-    # Auto phase detection
+    # AUTO DETECT PHASE
     if voltage_v <= 230:
-        # Single phase
+        # SINGLE PHASE
         return (power_kw * 1000) / (voltage_v * pf)
+
     else:
-        # Three phase
+        # THREE PHASE
         return (power_kw * 1000) / (math.sqrt(3) * voltage_v * pf * efficiency)
 
 
