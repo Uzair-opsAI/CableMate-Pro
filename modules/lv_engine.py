@@ -107,25 +107,28 @@ def select_best_lv(
             if amp < i_design:
                 continue
     
-          # Short Circuit (total conductor area)
+         # Short Circuit (LV practical logic)
+
             total_area = cable["size"] * runs
             
             apply_sc = True
             
-            # RULE 1: Ignore SC for very small loads
+            # Rule 1: ignore SC for very small loads
             if power_kw <= 5:
                 apply_sc = False
             
-            # RULE 2: Relax SC dominance for LV motors (practical EPC behavior)
+            # Rule 2: for LV motors, SC should not dominate sizing
             elif start_multiple > 3:
-                # Allow SC to be non-governing if ampacity & VD are satisfied
-                if total_area < (0.6 * s_min):   # 60% threshold (engineering margin)
+                # only enforce SC if it is extremely unsafe (very small cable)
+                if total_area < (0.4 * s_min):
                     continue
+                else:
+                    apply_sc = False  # treat SC as non-governing
             
+            # Final enforcement (only if still applicable)
             if apply_sc:
                 if total_area < s_min:
                     continue
-    
             # Running Voltage Drop (divided by runs)
             vd_run = voltage_drop_percent(
                 cable["mv_per_am"], current, length_m, voltage_kv
