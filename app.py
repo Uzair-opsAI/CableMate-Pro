@@ -631,7 +631,8 @@ if run_btn:
     # remove old MV state
         for key in ["calculated", "best", "I", "I_design", "S", "v", "vs"]:
             st.session_state.pop(key, None)
-
+            
+        logs = st.session_state.get("lv_logs")
         if debug_mode:
             result, logs = select_best_lv(
                 power_kw=power,
