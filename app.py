@@ -632,7 +632,8 @@ if run_btn:
         for key in ["calculated", "best", "I", "I_design", "S", "v", "vs"]:
             st.session_state.pop(key, None)
 
-        result = select_best_lv(
+        if debug_mode:
+            result, logs = select_best_lv(
             power_kw=power,
             voltage_kv=voltage,
             pf=pf,
@@ -647,9 +648,27 @@ if run_btn:
             start_multiple=starting_multiple,
             core_type=core_type,
             material=material,
-            debug=debug_mode
+            debug=True
         )
-    
+        else:
+            result = select_best_lv(
+            power_kw=power,
+            voltage_kv=voltage,
+            pf=pf,
+            eff=eff,
+            derating=kT,
+            laying=laying,
+            length_m=length,
+            fault_ka=fault,
+            fault_time=fault_time,
+            vd_run_limit=vd_run_limit,
+            vd_start_limit=vd_start_limit,
+            start_multiple=starting_multiple,
+            core_type=core_type,
+            material=material,
+            debug=False
+        )
+        logs = None
         st.session_state["lv_done"] = True
         st.session_state["lv_result"] = result
 
@@ -734,7 +753,10 @@ if run_btn:
 # LV RESULTS (FULL ENGINEERING DISPLAY)
 # ==================================================
 if st.session_state.get("lv_done", False):
-
+    if debug_mode and logs:
+        st.markdown("### 🧪 Debug Output")
+        for line in logs:
+            st.text(line)
     res = st.session_state.get("lv_result")
 
     if res:
@@ -782,6 +804,7 @@ if st.session_state.get("lv_done", False):
 
     else:
         st.error("⚠ No LV cable satisfies all checks.")
+        
 # ─────────────────────────────────────────────────
 # RESULTS
 # ─────────────────────────────────────────────────
@@ -792,7 +815,7 @@ if "calculated" in st.session_state:
     S_min    = st.session_state["S"]
     v        = st.session_state["v"]
     vs       = st.session_state["vs"]
-
+  
     st.markdown("<br>", unsafe_allow_html=True)
 
     if best:
