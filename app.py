@@ -623,7 +623,7 @@ def pick_best(valid_options):
 if run_btn:
 
     st.write("🚀 ENGINE STARTED")
-    debug_mode = st.checkbox("🧪 Enable Debug Mode (LV)", value=False)
+    debug_mode = st.checkbox("🧪 Enable Debug Mode (LV)", value=False, key="lv_debug_mode" )
     st.session_state["debug_mode"] = debug_mode   # ✅ ADD THIS
 
     # ==================================================
