@@ -650,6 +650,7 @@ if run_btn:
             material=material,
             debug=True
         )
+        st.session_state["lv_logs"] = logs  
         else:
             result = select_best_lv(
             power_kw=power,
@@ -668,7 +669,7 @@ if run_btn:
             material=material,
             debug=False
         )
-        logs = None
+        st.session_state["lv_logs"] = None   # reset
         st.session_state["lv_done"] = True
         st.session_state["lv_result"] = result
 
