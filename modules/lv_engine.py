@@ -86,7 +86,7 @@ def select_best_lv(
     insulation="XLPE",
     debug=False 
 ):
-
+    debug_logs = []
     dataset = get_dataset(core_type, material, insulation)
     if not dataset:
         return None
@@ -159,7 +159,14 @@ def select_best_lv(
                 "cost": cost
             })
     if not valid:
+        if debug:
+            return None, debug_logs
         return None
 
     # Smallest valid cable
-    return sorted(valid, key=lambda x: (x["runs"], x["size"]))[0]
+    best = sorted(valid, key=lambda x: (x["runs"], x["size"]))[0]
+
+    if debug:
+        return best, debug_logs
+    else:
+        return best
