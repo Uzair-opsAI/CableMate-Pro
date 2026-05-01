@@ -161,4 +161,4 @@ def select_best_lv(
         return None
 
     # Smallest valid cable
-    return sorted(valid, key=lambda x: (x["size"], x["runs"]))[0]
+    return sorted(valid, key=lambda x: (x["runs"], x["size"]))[0]
