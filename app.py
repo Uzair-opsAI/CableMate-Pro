@@ -757,7 +757,8 @@ if run_btn:
 # ==================================================
 if st.session_state.get("lv_done", False):
     debug_mode = st.session_state.get("debug_mode", False)
-    logs = st.session_state.get("lv_logs")
+    logs = st.session_state.get("lv_logs", [])
+
     if debug_mode and logs:
         st.markdown("### 🧪 Debug Output")
         for line in logs:
