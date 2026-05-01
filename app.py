@@ -622,6 +622,7 @@ if run_btn:
 
     st.write("🚀 ENGINE STARTED")
     debug_mode = st.checkbox("🧪 Enable Debug Mode (LV)", value=False)
+    st.session_state["debug_mode"] = debug_mode   # ✅ ADD THIS
 
     # ==================================================
     # LV ENGINE
@@ -755,6 +756,8 @@ if run_btn:
 # LV RESULTS (FULL ENGINEERING DISPLAY)
 # ==================================================
 if st.session_state.get("lv_done", False):
+    debug_mode = st.session_state.get("debug_mode", False)
+    logs = st.session_state.get("lv_logs")
     if debug_mode and logs:
         st.markdown("### 🧪 Debug Output")
         for line in logs:
