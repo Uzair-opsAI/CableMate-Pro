@@ -634,42 +634,42 @@ if run_btn:
 
         if debug_mode:
             result, logs = select_best_lv(
-            power_kw=power,
-            voltage_kv=voltage,
-            pf=pf,
-            eff=eff,
-            derating=kT,
-            laying=laying,
-            length_m=length,
-            fault_ka=fault,
-            fault_time=fault_time,
-            vd_run_limit=vd_run_limit,
-            vd_start_limit=vd_start_limit,
-            start_multiple=starting_multiple,
-            core_type=core_type,
-            material=material,
-            debug=True
-        )
-        st.session_state["lv_logs"] = logs  
+                power_kw=power,
+                voltage_kv=voltage,
+                pf=pf,
+                eff=eff,
+                derating=kT,
+                laying=laying,
+                length_m=length,
+                fault_ka=fault,
+                fault_time=fault_time,
+                vd_run_limit=vd_run_limit,
+                vd_start_limit=vd_start_limit,
+                start_multiple=starting_multiple,
+                core_type=core_type,
+                material=material,
+                debug=True
+            )
+            st.session_state["lv_logs"] = logs  
         else:
             result = select_best_lv(
-            power_kw=power,
-            voltage_kv=voltage,
-            pf=pf,
-            eff=eff,
-            derating=kT,
-            laying=laying,
-            length_m=length,
-            fault_ka=fault,
-            fault_time=fault_time,
-            vd_run_limit=vd_run_limit,
-            vd_start_limit=vd_start_limit,
-            start_multiple=starting_multiple,
-            core_type=core_type,
-            material=material,
-            debug=False
-        )
-        st.session_state["lv_logs"] = None   # reset
+                power_kw=power,
+                voltage_kv=voltage,
+                pf=pf,
+                eff=eff,
+                derating=kT,
+                laying=laying,
+                length_m=length,
+                fault_ka=fault,
+                fault_time=fault_time,
+                vd_run_limit=vd_run_limit,
+                vd_start_limit=vd_start_limit,
+                start_multiple=starting_multiple,
+                core_type=core_type,
+                material=material,
+                debug=False
+            )
+            st.session_state["lv_logs"] = None   # reset
         st.session_state["lv_done"] = True
         st.session_state["lv_result"] = result
 
