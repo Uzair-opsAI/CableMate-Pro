@@ -83,7 +83,8 @@ def select_best_lv(
     start_multiple,
     core_type,
     material="Cu",
-    insulation="XLPE"
+    insulation="XLPE",
+    debug=False 
 ):
 
     dataset = get_dataset(core_type, material, insulation)
