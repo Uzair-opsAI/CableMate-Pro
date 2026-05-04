@@ -486,7 +486,6 @@ st.markdown(f"""
 # ─────────────────────────────────────────────────
 _, col_run, _ = st.columns([1, 2, 1])
 with col_run:
-    debug_mode = st.checkbox("🧪 Enable Debug Mode (LV)", value=False)
     st.session_state["debug_mode"] = debug_mode
     run_btn = st.button("⚡  Run CableMate Analysis", use_container_width=True)
 
