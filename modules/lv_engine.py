@@ -95,78 +95,119 @@ def select_best_lv(
     i_design = design_current(current, derating)
     s_min = short_circuit_min_area(fault_ka, fault_time, material)
 
-    valid = []
+   valid = []
 
-    for cable in dataset:
-    
-        for runs in [1, 2, 3, 4]:
-    
-            # Ampacity (total)
-            amp_single = cable["current_air"] if laying == "Air" else cable["current_ground"]
-            amp = amp_single * runs
-    
-            if amp < i_design:
-                continue
-    
-            # Short Circuit (LV motor logic)
-            
-            apply_sc = True
-            
-            # Ignore SC completely for LV motors
-            if start_multiple > 3:
-                apply_sc = False
-            
-            # Ignore SC for very small loads
-            elif power_kw <= 5:
-                apply_sc = False
-            
-            if apply_sc:
-                total_area = cable["size"] * runs
-                if total_area < s_min:
-                    continue
-            # Running Voltage Drop (divided by runs)
-            vd_run = voltage_drop_percent(
-                cable["mv_per_am"], current, length_m, voltage_kv
-            ) / runs
-    
-            if vd_run > vd_run_limit:
-                continue
-    
-            # Starting Voltage Drop
-            if start_multiple > 1:
-                vd_start = starting_vd_percent(
-                    cable["mv_per_am"], current, length_m, voltage_kv, start_multiple
-                ) / runs
-    
-                if vd_start > vd_start_limit:
-                    continue
-            else:
-                vd_start = 0
-    
-            # Cost approximation (engineering decision basis)
-            cost = runs * cable["size"]
-    
-            valid.append({
-                "size": cable["size"],
-                "runs": runs,
-                "current": current,
-                "design": i_design,
-                "sc_min": s_min,
-                "vd_run": vd_run,
-                "vd_start": vd_start,
-                "ampacity": amp,
-                "cores": cable["cores"],
-                "cost": cost
-            })
-    if not valid:
+for cable in dataset:
+
+    for runs in [1, 2, 3, 4]:
+
         if debug:
-            return None, debug_logs
-        return None
+            debug_logs.append(f"Trying: {runs}R × {cable['cores']} × {cable['size']} mm²")
 
-    # Smallest valid cable
-    best = sorted(valid, key=lambda x: (x["runs"], x["size"]))[0]
+        # -------------------------------------------------
+        # AMPACITY CHECK
+        # -------------------------------------------------
+        amp_single = cable["current_air"] if laying == "Air" else cable["current_ground"]
+        amp = amp_single * runs
 
+        if debug:
+            debug_logs.append(f"  Ampacity: {amp:.1f} A | Required: {i_design:.1f} A")
+
+        if amp < i_design:
+            if debug:
+                debug_logs.append("  ❌ FAIL AMPACITY\n")
+            continue
+
+        # -------------------------------------------------
+        # SHORT CIRCUIT CHECK (LV LOGIC)
+        # -------------------------------------------------
+        apply_sc = True
+
+        # Ignore SC for motors (protected circuits)
+        if start_multiple > 3:
+            apply_sc = False
+
+        # Ignore SC for very small loads
+        elif power_kw <= 5:
+            apply_sc = False
+
+        if apply_sc:
+            total_area = cable["size"] * runs
+
+            if debug:
+                debug_logs.append(f"  SC Area: {total_area} | Required: {s_min:.1f}")
+
+            if total_area < s_min:
+                if debug:
+                    debug_logs.append("  ❌ FAIL SHORT CIRCUIT\n")
+                continue
+
+        # -------------------------------------------------
+        # RUNNING VOLTAGE DROP
+        # -------------------------------------------------
+        vd_run = voltage_drop_percent(
+            cable["mv_per_am"], current, length_m, voltage_kv
+        ) / runs
+
+        if debug:
+            debug_logs.append(f"  VD Run: {vd_run:.2f}% | Limit: {vd_run_limit}%")
+
+        if vd_run > vd_run_limit:
+            if debug:
+                debug_logs.append("  ❌ FAIL RUN VD\n")
+            continue
+
+        # -------------------------------------------------
+        # STARTING VOLTAGE DROP
+        # -------------------------------------------------
+        if start_multiple > 1:
+            vd_start = starting_vd_percent(
+                cable["mv_per_am"], current, length_m, voltage_kv, start_multiple
+            ) / runs
+
+            if debug:
+                debug_logs.append(f"  VD Start: {vd_start:.2f}% | Limit: {vd_start_limit}%")
+
+            if vd_start > vd_start_limit:
+                if debug:
+                    debug_logs.append("  ❌ FAIL START VD\n")
+                continue
+        else:
+            vd_start = 0
+
+        # -------------------------------------------------
+        # PASSED ALL CHECKS
+        # -------------------------------------------------
+        if debug:
+            debug_logs.append("  ✅ PASSED ALL CHECKS\n")
+
+        cost = runs * cable["size"]
+
+        valid.append({
+            "size": cable["size"],
+            "runs": runs,
+            "current": current,
+            "design": i_design,
+            "sc_min": s_min,
+            "vd_run": vd_run,
+            "vd_start": vd_start,
+            "ampacity": amp,
+            "cores": cable["cores"],
+            "cost": cost
+        })
+
+# -------------------------------------------------
+# FINAL SELECTION
+# -------------------------------------------------
+if not valid:
     if debug:
-        return best, debug_logs
-    else:
-        return best
+        return None, debug_logs
+    return None
+
+# Select optimal cable (engineering priority)
+best = sorted(valid, key=lambda x: (x["cost"], x["runs"]))[0]
+
+if debug:
+    return best, debug_logs
+else:
+    return best
