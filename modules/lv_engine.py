@@ -104,17 +104,18 @@ def select_best_lv(
                 debug_logs.append(f"Trying: {runs}R × {cable['cores']} × {cable['size']} mm²")
         
             # -------------------------------------------------
-            # AMPACITY CHECK
+            # AMPACITY CHECK (CORRECT IEC LOGIC)
             # -------------------------------------------------
             amp_single = cable["current_air"] if laying == "Air" else cable["current_ground"]
+            
+            # Apply derating to cable, NOT current
             amp = amp_single * derating * runs
-            if amp < current:
-                continue
-        
+            
             if debug:
-                debug_logs.append(f"  Ampacity: {amp:.1f} A | Required: {i_design:.1f} A")
-        
-            if amp < i_design:
+                debug_logs.append(f"  Ampacity: {amp:.1f} A | Required: {current:.1f} A")
+            
+            # Only compare with ACTUAL current
+            if amp < current:
                 if debug:
                     debug_logs.append("  ❌ FAIL AMPACITY\n")
                 continue
@@ -206,7 +207,10 @@ def select_best_lv(
         return None
     
     # Select optimal cable (engineering priority)
-    best = sorted(valid, key=lambda x: (x["cost"], x["runs"]))[0]
+    best = sorted(valid, key=lambda x: (
+        x["runs"],   # 🔴 PRIORITY 1 → fewer runs
+        x["size"],   # 🔴 PRIORITY 2 → smaller cable
+    ))[0]
     
     if debug:
         return best, debug_logs
