@@ -107,7 +107,9 @@ def select_best_lv(
             # AMPACITY CHECK
             # -------------------------------------------------
             amp_single = cable["current_air"] if laying == "Air" else cable["current_ground"]
-            amp = amp_single * runs
+            amp = amp_single * derating * runs
+            if amp < current:
+                continue
         
             if debug:
                 debug_logs.append(f"  Ampacity: {amp:.1f} A | Required: {i_design:.1f} A")
