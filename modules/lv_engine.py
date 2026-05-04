@@ -29,15 +29,35 @@ def short_circuit_min_area(fault_ka, time_sec, material="Cu"):
 
 
 def voltage_drop_percent(mv_per_am, current, length_m, voltage_kv):
+
+    voltage_v = voltage_kv * 1000
+
+    # Base VD calculation
     vd_volts = (mv_per_am * current * length_m) / 1000
-    return (vd_volts / (voltage_kv * 1000)) * 100
+
+    # Phase correction (IEC logic)
+    if voltage_v <= 230:
+        # SINGLE PHASE → return path included
+        vd_volts = vd_volts * 2
+    else:
+        # THREE PHASE → mv_per_am already includes √3 factor
+        pass
+
+    return (vd_volts / voltage_v) * 100
 
 
 def starting_vd_percent(mv_per_am, current, length_m, voltage_kv, multiple):
-    start_current = current * multiple
-    vd_volts = (mv_per_am * start_current * length_m) / 1000
-    return (vd_volts / (voltage_kv * 1000)) * 100
 
+    voltage_v = voltage_kv * 1000
+    start_current = current * multiple
+
+    vd_volts = (mv_per_am * start_current * length_m) / 1000
+
+    # Phase correction
+    if voltage_v <= 230:
+        vd_volts = vd_volts * 2
+
+    return (vd_volts / voltage_v) * 100
 
 # -------------------------------------------------
 # DATASET SELECTOR
