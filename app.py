@@ -629,7 +629,7 @@ if run_btn:
     # ==================================================
     # LV ENGINE
     # ==================================================
-    if mode == "LV" and run:
+    if mode == "LV":
 
     # remove old MV state
         for key in ["calculated", "best", "I", "I_design", "S", "v", "vs"]:
