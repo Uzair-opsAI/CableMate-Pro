@@ -634,7 +634,6 @@ if run_btn:
         for key in ["calculated", "best", "I", "I_design", "S", "v", "vs"]:
             st.session_state.pop(key, None)
             
-        logs = st.session_state.get("lv_logs")
         if debug_mode:
             result, logs = select_best_lv(
                 power_kw=power,
@@ -760,10 +759,14 @@ if st.session_state.get("lv_done", False):
     debug_mode = st.session_state.get("debug_mode", False)
     logs = st.session_state.get("lv_logs", [])
 
-    if debug_mode and logs:
+    if debug_mode:
         st.markdown("### 🧪 Debug Output")
-        for line in logs:
-            st.text(line)
+
+        if logs:
+            for line in logs:
+                st.text(line)
+        else:
+            st.warning("⚠ Debug mode is ON but no logs were generated.")
     res = st.session_state.get("lv_result")
 
     if res:
