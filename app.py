@@ -486,6 +486,7 @@ st.markdown(f"""
 # ─────────────────────────────────────────────────
 _, col_run, _ = st.columns([1, 2, 1])
 with col_run:
+    debug_mode = st.checkbox("🧪 Enable Debug Mode (LV)", value=False)
     st.session_state["debug_mode"] = debug_mode
     run_btn = st.button("⚡  Run CableMate Analysis", use_container_width=True)
 
@@ -622,7 +623,6 @@ def pick_best(valid_options):
 if run_btn:
 
     st.write("🚀 ENGINE STARTED")
-    debug_mode = st.checkbox("🧪 Enable Debug Mode (LV)", value=False, key="lv_debug_mode" )
     st.session_state["debug_mode"] = debug_mode   # ✅ ADD THIS
 
     # ==================================================
