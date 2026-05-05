@@ -218,7 +218,6 @@ with col1:
 
     # Phase System (LV only)
     if mode == "LV":
-        st.write("DEBUG INPUT → Power:", power)
         phase_system = st.selectbox(
             "Phase System",
             ["Auto", "3-Phase", "1-Phase"]
