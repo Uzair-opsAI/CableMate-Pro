@@ -330,6 +330,14 @@ with col2:
     )
 
 close_card()
+# ─────────────────────────────────────────────────
+# DEBUG INPUT CHECK (CORRECT PLACEMENT)
+# ─────────────────────────────────────────────────
+if mode == "LV":
+    st.write("DEBUG INPUT → Power:", power)
+    st.write("DEBUG INPUT → Voltage:", voltage)
+    st.write("DEBUG INPUT → PF:", pf)
+    st.write("DEBUG INPUT → Efficiency:", eff)
 
 # ─────────────────────────────────────────────────
 # ④ CONDUCTOR DETAILS
